@@ -189,34 +189,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               SizedBox(height: 20),
 
               // Sign Up button
-              InkWell(
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    context.read<RegistrationScreenController>().onRegistration(
-                        context: context,
-                        emailAddress: _emailController.text,
-                        password: _passwordController.text);
-                    // If form is valid, proceed with registration
-                    // Code to navigate to login screen after successful registration
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Color(0xff1a75d2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    "Sign Up",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              context.watch<RegistrationScreenController>().isLoading
+                  ? CircularProgressIndicator()
+                  : InkWell(
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          context
+                              .read<RegistrationScreenController>()
+                              .onRegistration(
+                                  context: context,
+                                  emailAddress: _emailController.text,
+                                  password: _passwordController.text);
+                          // If form is valid, proceed with registration
+                          // Code to navigate to login screen after successful registration
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color(0xff1a75d2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
               Spacer(),
 
               Row(

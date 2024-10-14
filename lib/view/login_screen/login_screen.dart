@@ -1,5 +1,8 @@
+import 'package:firebase_samle_may/controller/login_screen_controller.dart';
+import 'package:firebase_samle_may/main.dart';
 import 'package:firebase_samle_may/view/registration_screen/registration_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -169,30 +172,36 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 20),
 
               // Sign in button
-              InkWell(
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    // If form is valid, proceed with login
-                    // Code to navigate to home screen on successful login
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Color(0xff1a75d2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    "Sign in",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              context.watch<LoginScreenController>().isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : InkWell(
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<LoginScreenController>().onLogin(
+                              emailAddress: _emailController.text,
+                              password: _passwordController.text,
+                              context: context);
+                          // If form is valid, proceed with login
+                          // Code to navigate to home screen on successful login
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color(0xff1a75d2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          "Sign in",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
               Spacer(),
 
               Row(
