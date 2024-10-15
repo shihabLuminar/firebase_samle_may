@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_samle_may/controller/home_screen_controller.dart';
 import 'package:firebase_samle_may/controller/login_screen_controller.dart';
 import 'package:firebase_samle_may/controller/registration_screen_controller.dart';
 import 'package:firebase_samle_may/firebase_options.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
             create: (context) => RegistrationScreenController()),
-        ChangeNotifierProvider(create: (context) => LoginScreenController())
+        ChangeNotifierProvider(create: (context) => HomeScreenController()),
+        ChangeNotifierProvider(create: (context) => LoginScreenController()),
       ],
       child: MaterialApp(
           title: 'Flutter Demo',
