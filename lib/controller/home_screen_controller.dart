@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreenController with ChangeNotifier {
@@ -25,11 +24,6 @@ class HomeScreenController with ChangeNotifier {
   void updateCourse() {}
 
   Future<void> deleteCourse(var docId) async {
-    final data = {
-      "name": "newdaat",
-      "timing": "new timing",
-      "duration": "6 months"
-    };
     await databseCollection.doc(docId).delete();
   }
 }
