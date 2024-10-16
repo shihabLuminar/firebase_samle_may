@@ -6,12 +6,16 @@ class HomeScreenController with ChangeNotifier {
 
   var databseCollection = FirebaseFirestore.instance.collection("courses");
 
-  Future<void> addCourse() async {
+  Future<void> addCourse({
+    required String name,
+    required String duration,
+    required String timing,
+  }) async {
     isLoading = true;
     notifyListeners();
 
     try {
-      final data = {"name": "Tokyo", "timing": "Japan", "duration": "6 months"};
+      final data = {"name": name, "timing": timing, "duration": duration};
       await databseCollection.add(data);
     } catch (e) {
       print(e);

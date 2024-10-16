@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_samle_may/controller/home_screen_controller.dart';
 import 'package:firebase_samle_may/main.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Homescreen extends StatefulWidget {
@@ -15,12 +16,14 @@ class Homescreen extends StatefulWidget {
 class _HomescreenState extends State<Homescreen> {
   final Stream<QuerySnapshot> _coursesStream =
       FirebaseFirestore.instance.collection('courses').snapshots();
+
+  var pickedImageurl;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<HomeScreenController>().addCourse();
+          customAlertDialogue(context);
         },
       ),
       appBar: AppBar(
@@ -50,13 +53,28 @@ class _HomescreenState extends State<Homescreen> {
                   Map<String, dynamic> data =
                       document.data()! as Map<String, dynamic>;
                   return ListTile(
-                    leading: IconButton(
-                        onPressed: () {
-                          context
-                              .read<HomeScreenController>()
-                              .deleteCourse(document.id);
-                        },
-                        icon: Icon(Icons.delete)),
+                    onTap: () {
+                      customAlertDialogue(context,
+                          isEdit: true,
+                          name: data['name'],
+                          duration: data['duration']);
+                    },
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              context
+                                  .read<HomeScreenController>()
+                                  .deleteCourse(document.id);
+                            },
+                            icon: Icon(Icons.delete)),
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              "https://images.pexels.com/photos/16292048/pexels-photo-16292048/free-photo-of-sidewalk-cafe-in-a-city-street.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+                        )
+                      ],
+                    ),
                     trailing: Text(data['timing']),
                     title: Text(data['name']),
                     subtitle: Text(data['duration']),
@@ -66,6 +84,80 @@ class _HomescreenState extends State<Homescreen> {
                 .cast(),
           );
         },
+      ),
+    );
+  }
+
+  Future<dynamic> customAlertDialogue(BuildContext context,
+      {bool isEdit = false, String? name, String? duration}) {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController durationController = TextEditingController();
+    TextEditingController timingController = TextEditingController();
+
+    if (isEdit) {
+      nameController.text = name!;
+      durationController.text = duration!;
+      timingController.text = "old name";
+    }
+    return showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text("Add a course"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: () {
+                  final pickedFile =
+                      ImagePicker().pickImage(source: ImageSource.camera);
+                },
+                child: CircleAvatar(
+                  backgroundImage: pickedImageurl != null
+                      ? NetworkImage(pickedImageurl)
+                      : null,
+                  child: pickedImageurl == null ? Icon(Icons.person) : null,
+                  radius: 70,
+                ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                    hintText: "Name", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: durationController,
+                decoration: InputDecoration(
+                    hintText: "Duration", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: timingController,
+                decoration: InputDecoration(
+                    hintText: "Timing", border: OutlineInputBorder()),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel")),
+            ElevatedButton(
+                onPressed: () {
+                  context.read<HomeScreenController>().addCourse(
+                        name: nameController.text,
+                        duration: durationController.text,
+                        timing: timingController.text,
+                      );
+                  Navigator.pop(context);
+                },
+                child: Text("Add")),
+          ],
+        ),
       ),
     );
   }
