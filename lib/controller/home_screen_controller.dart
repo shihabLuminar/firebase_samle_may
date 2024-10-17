@@ -43,6 +43,8 @@ class HomeScreenController with ChangeNotifier {
   }
 
   Future uploadImage() async {
+    var uniqueName = DateTime.now().microsecondsSinceEpoch.toString();
+    log(uniqueName);
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     // Points to the root reference
@@ -51,7 +53,7 @@ class HomeScreenController with ChangeNotifier {
     // Points to "images"
     Reference? folder = storageRef.child("courses");
 
-    var imagereference = folder.child("coursename.jpg");
+    var imagereference = folder.child("$uniqueName.jpg");
     if (pickedFile != null) {
       await imagereference.putFile(File(pickedFile!.path));
       pickedImageurl = await imagereference.getDownloadURL();

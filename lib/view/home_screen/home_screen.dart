@@ -36,64 +36,53 @@ class _HomescreenState extends State<Homescreen> {
               icon: Icon(Icons.logout))
         ],
       ),
-      body: Column(
-        children: [
-          Consumer<HomeScreenController>(
-            builder: (context, proObj, child) => CircleAvatar(
-              backgroundImage: (NetworkImage(proObj.pickedImageurl)),
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream: _coursesStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: const Text('Something went wrong'));
-                }
+      body: StreamBuilder(
+        stream: _coursesStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: const Text('Something went wrong'));
+          }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-                return ListView(
-                  children: snapshot.data!.docs
-                      .map((DocumentSnapshot document) {
-                        Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-                        return ListTile(
-                          onTap: () {
-                            customAlertDialogue(context,
-                                isEdit: true,
-                                name: data['name'],
-                                duration: data['duration']);
-                          },
-                          leading: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    context
-                                        .read<HomeScreenController>()
-                                        .deleteCourse(document.id);
-                                  },
-                                  icon: Icon(Icons.delete)),
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(data['imageurl']),
-                              )
-                            ],
-                          ),
-                          trailing: Text(data['timing']),
-                          title: Text(data['name']),
-                          subtitle: Text(data['duration']),
-                        );
-                      })
-                      .toList()
-                      .cast(),
-                );
-              },
-            ),
-          ),
-        ],
+          return ListView(
+            children: snapshot.data!.docs
+                .map((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  return ListTile(
+                    onTap: () {
+                      customAlertDialogue(context,
+                          isEdit: true,
+                          name: data['name'],
+                          duration: data['duration']);
+                    },
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              context
+                                  .read<HomeScreenController>()
+                                  .deleteCourse(document.id);
+                            },
+                            icon: Icon(Icons.delete)),
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(data['imageurl']),
+                        )
+                      ],
+                    ),
+                    trailing: Text(data['timing']),
+                    title: Text(data['name']),
+                    subtitle: Text(data['duration']),
+                  );
+                })
+                .toList()
+                .cast(),
+          );
+        },
       ),
     );
   }
